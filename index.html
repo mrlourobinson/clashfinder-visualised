@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Upload and Render</title>
-    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Clashfinder Visualiser</title>
     <link href="style.css" rel="stylesheet">
 </head>
+
 <body>
     <h1>Clashfinder Visualiser</h1>
-    <input type="file" id="csvFileInput" accept=".csv" />
-    <div id="csvOutput"></div>
+    <div class="controls">
+        <label for="file-upload" class="custom-file-upload">
+            <i class="fa fa-cloud-upload"></i>Upload Clashfinder file
+        </label>
+        <input type="file" id="file-upload" class="button" accept=".csv" />
+    </div>  
+    <div id="clash-count"></div>
+    <div id="packedCircles"></div>
     <div id="chart"></div>
 
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

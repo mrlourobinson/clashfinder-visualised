@@ -1,23 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('data.csv')
-        .then(response => response.text())
-        .then(contents => {
-            const rows = d3.csvParseRows(contents);
+    const csvFileInput = document.getElementById('file-upload');
 
-            // Skip the first 10 rows
-            const relevantRows = rows.slice(11);
+    csvFileInput.addEventListener('change', event => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                const rows = d3.csvParseRows(contents);
 
-            const data = relevantRows.map(row => ({
-                start: new Date(row[0]),
-                end: new Date(row[1]),
-                location: row[3],
-                name: row[2]
-            }));
+                // Skip the first 10 rows
+                const relevantRows = rows.slice(11);
 
-            renderGanttChart(data);
-        })
-        .catch(error => console.error('Error fetching the CSV file:', error));
+                const data = relevantRows.map(row => ({
+                    start: new Date(row[0]),
+                    end: new Date(row[1]),
+                    location: row[3],
+                    name: row[2],
+                    clash: false // Initialize with false
+                }));
+
+                checkOverlaps(data);
+                renderGanttChart(data);
+                renderPackedCircles(data);
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    d3.select('#file-upload')
+        .attr("display", "none");
+
 });
+
+function checkOverlaps(data) {
+    const overlaps = [];
+
+    for (let i = 0; i < data.length - 1; i++) {
+        for (let j = i + 1; j < data.length; j++) {
+            if (data[i].end > data[j].start && data[i].start < data[j].end) {
+                overlaps.push({ entry1: data[i], entry2: data[j] });
+                data[i].clash = true;
+                data[j].clash = true;
+            }
+        }
+    }
+
+    if (overlaps.length > 0) {
+        console.warn('Overlapping entries found:', overlaps);
+        d3.select('#clash-count')
+            .html("<span style='font-size: 30px'>&#x26a0;</span> You have "+ overlaps.length + " clashes 	<span style='font-size: 30px'>&#x26a0;</span>")
+    } else {
+        console.log('No overlaps found');
+        d3.select('#clash-count')
+            .text("You have no clashes! 1f973")
+    }
+}
 
 function renderGanttChart(data) {
 
@@ -41,17 +79,18 @@ function renderGanttChart(data) {
 
     const y = d3.scaleTime()
         .domain([d3.min(data, d => d.start), d3.max(data, d => d.end)])
-        .range([0, height]);
+        .range([0, height-margin.top]);
 
     svg.append("g")
         .attr("class", "axis")
         .call(d3.axisLeft(y)
-                .ticks(40));
+                .ticks(40)
+                .tickFormat(d3.timeFormat("%-I %p")));
 
     svg.append("g")
         .attr("class", "grid")
         .call(d3.axisLeft(y)
-            .ticks(40)  
+            .ticks(40)
             .tickSize(-width)
             .tickFormat(""));
 
@@ -59,7 +98,7 @@ function renderGanttChart(data) {
         .attr("class", "grid")
         .call(d3.axisTop(x)
             .ticks(40)  
-            .tickSize(-height)
+            .tickSize(-height+margin.top)
             .tickFormat(""));
 
     svg.append("g")
@@ -82,17 +121,24 @@ function renderGanttChart(data) {
     .attr("class", "tooltip")
     .style("position","absolute");
 
+    const formatTime = d3.utcFormat("%A %d %B, %H:%M");
+
     // Three function that change the tooltip when user hover / move / leave a cell
     var mouseover = function(d) {
     Tooltip
         .style("opacity", 1)
     }
-    var mousemove = function(event, d) {
-    Tooltip
-        .html(`<b>${d.name}</b><br>${d.location}`)
-        .style("left", (event.pageX+20) + "px")
-        .style("top", (event.pageY) + "px")
-    }
+
+
+    const mousemove = function(event, d) {
+        Tooltip
+            .html(d.clash
+                ? `<span style="color: black; font-size: 11pt;"><b>Clash detected!</b><br></span><br><b>${d.name}</b><br>${d.location}<br>${formatTime(d.start)}<br>`
+                : `<b>${d.name}</b><br>${d.location}<br>${formatTime(d.start)}`)
+            .style("left", (event.pageX + 20) + "px")
+            .style("top", (event.pageY) + "px");
+    };
+    
     var mouseleave = function(d) {
     Tooltip
         .style("opacity", 0)
@@ -107,6 +153,13 @@ function renderGanttChart(data) {
         .attr("height", d => y(d.end) - y(d.start))
         .attr("width", x.bandwidth())
         .attr("fill", d => color(d.location))
+        .attr("class", function(d) {
+            if(d.clash == true) {
+                return "dashed";
+            } else {
+                return "solid";
+            }
+        })
         .attr("fill-opacity", 0.3)
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
@@ -125,3 +178,4 @@ function renderGanttChart(data) {
 
     
 }
+
