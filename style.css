@@ -4,6 +4,7 @@
 body {
     background-color: #14213D;
     font-family: "Overpass Mono", monospace;
+    font-weight: 300;
     font-optical-sizing: auto;
 }
 
@@ -63,9 +64,21 @@ h1 {
     font-family: "Orelega One", serif;
     font-weight: 400;
     font-style: normal;
-    font-size: 22pt;
+    font-size: 25pt;
     color: #F5F5F5;
     text-align: center;
+}
+
+h2 {
+    font-size: 14pt;
+}
+
+p {
+    font-size: 11pt;
+}
+
+b {
+    font-weight: 700;
 }
 
 #chart {
@@ -73,6 +86,22 @@ h1 {
     max-width: 1024px;
     margin: auto;
 }
+
+#instructions {
+    width: 100%;
+    max-width: 512px;
+    padding: 10vh 10px 0 10px;
+    margin: auto;
+    color: white;
+}
+hr {
+    margin: 0 15px 0 0;
+}
+ 
+a:link, a:visited {
+    color: white;
+}
+
 
 #packedCircles {
     width: 100%;

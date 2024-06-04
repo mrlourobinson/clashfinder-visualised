@@ -9,16 +9,27 @@
 </head>
 
 <body>
-    <h1>Clashfinder Visualiser</h1>
-    <div class="controls">
-        <label for="file-upload" class="custom-file-upload">
-            <i class="fa fa-cloud-upload"></i>Upload Clashfinder file
-        </label>
-        <input type="file" id="file-upload" class="button" accept=".csv" />
-    </div>  
+    <h1>Glasto<br>Clashfinder<br>Visualiser</h1>
     <div id="clash-count"></div>
     <div id="packedCircles"></div>
     <div id="chart"></div>
+    <div id="instructions">
+        <h2>How to get your Clashfinder data:</h2>
+        <hr>
+        <p>Visit the Clashfinder page for your event - this tool has been built with 
+            <a href="https://clashfinder.com/s/g2024/?user=155wuz.lk&">Glastonbury 2024</a>  in mind, 
+            so unsure if this will work with other events.</p>
+        <p>Once you have completed your Clashfinder, at the top select <b>Data</b> then <b>Export</b>. 
+            Choose <b>Your Highlights</b> and set the format to <b>CSV</b> and click <b>OK</b>.</p>
+        <hr>
+        <p>Now you have got your file, upload it below and see how many clashes you have!</p><br>
+        <div class="controls">
+            <label for="file-upload" class="custom-file-upload">
+                <i class="fa fa-cloud-upload"></i>Upload Clashfinder file
+            </label>
+            <input type="file" id="file-upload" class="button" accept=".csv" />
+        </div>  
+    </div>
 
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="script.js"></script>

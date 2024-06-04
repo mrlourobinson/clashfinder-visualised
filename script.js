@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: row[2],
                     clash: false // Initialize with false
                 }));
-
+                
+                clearExistingCharts();
                 checkOverlaps(data);
                 renderGanttChart(data);
                 renderPackedCircles(data);
@@ -32,6 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr("display", "none");
 
 });
+
+function clearExistingCharts() {
+    d3.select("#chart").selectAll("*").remove();
+    d3.select("#packedCircles").selectAll("*").remove();
+    d3.select("#instructions").selectAll("*").remove();
+
+}
 
 function checkOverlaps(data) {
     const overlaps = [];
