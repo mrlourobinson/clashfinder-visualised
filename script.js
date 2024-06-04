@@ -81,7 +81,8 @@ function renderGanttChart(data) {
 
     const margin = { top: 150, right: 30, bottom: 40, left: 60 };
     const width = element.getBoundingClientRect().width - margin.left - margin.right;
-    const height = (element.getBoundingClientRect().width * 1.75) - margin.top - margin.bottom;
+    const multiplier = (width < 500) ? (4) : (1.75);
+    const height = (element.getBoundingClientRect().width * multiplier) - margin.top - margin.bottom;
 
     const svg = d3.select("#chart").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -181,17 +182,6 @@ function renderGanttChart(data) {
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
-
-    // svg.selectAll(".label")
-    //     .data(data)
-    //     .enter().append("text")
-    //     .attr("class", "label")
-    //     .attr("y", d => y(d.start) + 5)
-    //     .attr("x", d => x(d.location) + x.bandwidth() / 2)
-    //     .attr("dx", ".35em")
-    //     .text(d => d.name)
-    //     .attr("fill", "black");
-    
 }
 
 
