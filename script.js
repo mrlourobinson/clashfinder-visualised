@@ -1,43 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
     const csvFileInput = document.getElementById('file-upload');
+    const useSampleDataButton = document.getElementById('useSampleDataButton');
 
-    csvFileInput.addEventListener('change', event => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const contents = e.target.result;
-                const rows = d3.csvParseRows(contents);
-
-                // Skip the first 10 rows
-                const relevantRows = rows.slice(11);
-
-                const data = relevantRows.map(row => ({
-                    start: new Date(row[0]),
-                    end: new Date(row[1]),
-                    location: row[3],
-                    name: row[2],
-                    clash: false // Initialize with false
-                }));
-                
-                clearExistingCharts();
-                checkOverlaps(data);
-                renderGanttChart(data);
-                renderPackedCircles(data);
-            };
-            reader.readAsText(file);
-        }
-    });
-
-    d3.select('#file-upload')
-        .attr("display", "none");
-
+    csvFileInput.addEventListener('change', handleFileUpload);
+    useSampleDataButton.addEventListener('click', useSampleData);
 });
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            processData(e.target.result);
+        };
+        reader.readAsText(file);
+    }
+}
+
+function useSampleData() {
+    fetch('data.csv')
+        .then(response => response.text())
+        .then(processData)
+        .catch(error => console.error('Error fetching sample data:', error));
+}
+
+function processData(contents) {
+    const rows = d3.csvParseRows(contents);
+    const relevantRows = rows.slice(11);
+    const data = relevantRows.map(row => ({
+        start: new Date(row[0]),
+        end: new Date(row[1]),
+        location: row[3],
+        name: row[2],
+        clash: false // Initialize with false
+    }));
+
+    checkOverlaps(data);
+    clearExistingCharts();
+    renderGanttChart(data);
+    //renderPackedCircles(data);
+}
+
+
 
 function clearExistingCharts() {
     d3.select("#chart").selectAll("*").remove();
     d3.select("#packedCircles").selectAll("*").remove();
-    d3.select("#instructions").selectAll("*").remove();
+    //d3.select("#instructions").selectAll("*").remove();
 
 }
 
@@ -182,8 +191,7 @@ function renderGanttChart(data) {
     //     .attr("dx", ".35em")
     //     .text(d => d.name)
     //     .attr("fill", "black");
-
-
     
 }
+
 

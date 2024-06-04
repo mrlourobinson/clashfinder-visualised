@@ -9,7 +9,7 @@ body {
 }
 
 .controls {
-    display: flex;
+    display: block;
     justify-content: center;
     align-items: center;
     margin: 20px 0;
@@ -21,16 +21,48 @@ input[type="file"] {
 .custom-file-upload {
     border: 1px solid #FFBE0B;
     border-radius: 5px;
-    display: inline-block;
+    text-align: center;
+    display: block; /* Change from inline-block to block */
     padding: 6px 12px;
     cursor: pointer;
     font-size: 12pt;
-    color:#FFBE0B;
+    color: #FFBE0B;
     background-color: #f5f5f50c;
     transition: background-color .35s ease-in-out;
     -moz-transition: background-color .35s ease-in-out;
     -webkit-transition: background-color .35s ease-in-out;
+    margin-top: 10px; /* Optional: Add margin to create space between elements */
 }
+
+#useSampleDataButton {
+    border: 1px solid #c5c5c5;
+    border-radius: 5px;
+    margin:auto;
+    display: block; /* Change from inline-block to block */
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12pt;
+    color: #777777;
+    background-color: #f5f5f50c;
+    transition: background-color .35s ease-in-out;
+    -moz-transition: background-color .35s ease-in-out;
+    -webkit-transition: background-color .35s ease-in-out;
+    margin-top: 10px; /* Optional: Add margin to create space between elements */
+}
+
+#footer {
+    color: #d2d2d2;
+    margin: 50px auto;
+    text-align: center;
+    
+}
+
+#footer p {
+    font-size: 9pt;
+    color: #c5c5c5;
+    line-height: 50%;
+}
+
 
 .custom-file-upload:hover {
     background-color: #f5f5f52d;
@@ -90,7 +122,7 @@ b {
 #instructions {
     width: 100%;
     max-width: 512px;
-    padding: 10vh 10px 0 10px;
+    padding: 5vh 10px 0 10px;
     margin: auto;
     color: white;
 }
