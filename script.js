@@ -20,9 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderGanttChart(data) {
-    const margin = { top: 20, right: 30, bottom: 40, left: 150 };
-    const width = 1000 - margin.left - margin.right;
-    const height = 2000 - margin.top - margin.bottom;
+
+    var element = d3.select('#chart').node();
+    element.getBoundingClientRect().width;
+
+    const margin = { top: 150, right: 30, bottom: 40, left: 60 };
+    const width = element.getBoundingClientRect().width - margin.left - margin.right;
+    const height = (element.getBoundingClientRect().width * 1.75) - margin.top - margin.bottom;
 
     const svg = d3.select("#chart").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -42,20 +46,32 @@ function renderGanttChart(data) {
     svg.append("g")
         .attr("class", "axis")
         .call(d3.axisLeft(y)
-                .ticks(40)  );
+                .ticks(40));
 
     svg.append("g")
         .attr("class", "grid")
         .call(d3.axisLeft(y)
             .ticks(40)  
             .tickSize(-width)
-            .tickFormat("")
-        );
+            .tickFormat(""));
+
+    svg.append("g")
+        .attr("class", "grid")
+        .call(d3.axisTop(x)
+            .ticks(40)  
+            .tickSize(-height)
+            .tickFormat(""));
 
     svg.append("g")
         .attr("class", "axis")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+        //.attr("transform", `translate(0,${height})`)
+        .call(d3.axisTop(x))
+        .selectAll("text")  
+            .style("text-anchor", "start")
+            .attr("class","x-text")
+            .attr("dx", "1em")
+            .attr("dy", "-0.2em")
+            .attr("transform", "rotate(-45)" );;
 
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -64,19 +80,11 @@ function renderGanttChart(data) {
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
-    .style("padding", "5px")
     .style("position","absolute");
 
     // Three function that change the tooltip when user hover / move / leave a cell
     var mouseover = function(d) {
     Tooltip
-        .style("opacity", 1)
-    d3.select(this)
-        .style("stroke", "black")
         .style("opacity", 1)
     }
     var mousemove = function(event, d) {
@@ -88,9 +96,6 @@ function renderGanttChart(data) {
     var mouseleave = function(d) {
     Tooltip
         .style("opacity", 0)
-    d3.select(this)
-        .style("stroke", "none")
-        .style("opacity", 0.8)
     }
 
     svg.selectAll(".bar")
@@ -102,6 +107,7 @@ function renderGanttChart(data) {
         .attr("height", d => y(d.end) - y(d.start))
         .attr("width", x.bandwidth())
         .attr("fill", d => color(d.location))
+        .attr("fill-opacity", 0.3)
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
