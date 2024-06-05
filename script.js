@@ -38,7 +38,9 @@ function processData(contents) {
     checkOverlaps(data);
     clearExistingCharts();
     renderGanttChart(data);
-    //renderPackedCircles(data);
+    renderPackedCircles(data);
+
+    d3.select(".viz-button").style("visibility","visible")
 }
 
 
@@ -72,16 +74,29 @@ function checkOverlaps(data) {
         d3.select('#clash-count')
             .text("You have no clashes! 1f973")
     }
+
+
+    let artists = [...new Set(data.map((d) => d.name))].length;
+    let stages = [...new Set(data.map((d) => d.location))].length;
+
+    d3.select('#artist-count')
+            .html("You are going to see "+ artists + " artists on " + stages + " stages.")
+    
+
+    console.log(artists)
+    console.log(stages)
 }
 
 function renderGanttChart(data) {
 
     var element = d3.select('#chart').node();
-    element.getBoundingClientRect().width;
+    const windowWidth = element.getBoundingClientRect().width;
+
+    const isMobile = (windowWidth < 500) ? (true) : (false);
 
     const margin = { top: 150, right: 30, bottom: 40, left: 60 };
-    const width = element.getBoundingClientRect().width - margin.left - margin.right;
-    const multiplier = (width < 500) ? (4) : (1.75);
+    const width = windowWidth - margin.left - margin.right;
+    const multiplier = (isMobile == true) ? (4) : (1.75);
     const height = (element.getBoundingClientRect().width * multiplier) - margin.top - margin.bottom;
 
     const svg = d3.select("#chart").append("svg")
@@ -127,8 +142,21 @@ function renderGanttChart(data) {
             .style("text-anchor", "start")
             .attr("class","x-text")
             .attr("dx", "1em")
-            .attr("dy", "-0.2em")
-            .attr("transform", "rotate(-45)" );;
+            .attr("dy", (isMobile == true) ? ("1em") : ("-0.2em"))
+            .attr("transform", (isMobile == true) ? ("rotate(-90)") : ("rotate(-45)") );
+
+        // Add the day as text inside the axis
+    const days = d3.timeDays(d3.min(data, d => d.start), d3.max(data, d => d.end));
+    svg.selectAll(".day-label")
+        .data(days)
+        .enter()
+        .append("text")
+        .attr("class", "day-label")
+        .attr("x", 15)
+        .attr("y", d => y(d))
+        .attr("dy", "1em")
+        .attr("text-anchor", "start")
+        .text(d => d3.timeFormat("%A %d %B")(d));
 
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -185,3 +213,58 @@ function renderGanttChart(data) {
 }
 
 
+function renderPackedCircles(data) {
+    const element = d3.select('#packedCircles').node();
+    const diameter = element.getBoundingClientRect().width;
+
+    // Aggregate data by location and count names
+    const locationCounts = d3.rollup(data, v => v.length, d => d.location);
+    const packedData = Array.from(locationCounts, ([location, count]) => ({ location, count }));
+
+    const root = d3.hierarchy({ children: packedData })
+        .sum(d => d.count);
+
+    const pack = d3.pack()
+        .size([diameter, diameter])
+        .padding(1.5);
+
+    const svg = d3.select("#packedCircles").append("svg")
+        .attr("width", diameter)
+        .attr("height", diameter)
+        .append("g")
+        .attr("transform", `translate(${diameter / 2},${diameter / 2})`);
+
+    const nodes = pack(root).leaves();
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    const node = svg.selectAll("circle")
+        .data(nodes)
+        .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", d => d.r)
+        .attr("cx", d => d.x - diameter / 2)
+        .attr("cy", d => d.y - diameter / 2)
+        .style("fill", d => color(d.data.location))
+        .attr("stroke", "#000")
+        .attr("stroke-width", "1px");
+
+    const label = svg.selectAll("text")
+        .data(nodes)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("dy", ".3em")
+        .attr("x", d => d.x - diameter / 2)
+        .attr("y", d => d.y - diameter / 2)
+        .style("text-anchor", "middle")
+        .style("fill", "#fff")
+        .style("font-size", "10px")
+        .text(d => `${d.data.location}: ${d.data.count}`);
+}
+
+function expandContract() {
+    const el = document.getElementById("expand-contract")
+    el.classList.toggle('collapsed')
+    el.classList.toggle('expanded')
+
+ }

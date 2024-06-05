@@ -32,6 +32,7 @@ input[type="file"] {
     -moz-transition: background-color .35s ease-in-out;
     -webkit-transition: background-color .35s ease-in-out;
     margin-top: 10px; /* Optional: Add margin to create space between elements */
+    margin: 10px auto;
 }
 
 #useSampleDataButton {
@@ -73,6 +74,14 @@ input[type="file"] {
 
 #clash-count {
     margin-top: 20px;
+    color: #ffffff;
+    margin: auto;
+    text-align: center;
+}
+
+#artist-count {
+    margin-top: 20px;
+    font-size: 11pt;
     color: #ffffff;
     margin: auto;
     text-align: center;
@@ -122,7 +131,7 @@ b {
 #instructions {
     width: 100%;
     max-width: 512px;
-    padding: 5vh 10px 0 10px;
+    padding: 0 10px 0 10px;
     margin: auto;
     color: white;
 }
@@ -136,7 +145,7 @@ a:link, a:visited {
 
 
 #packedCircles {
-    width: 100%;
+    width: 75%;
     max-width: 1000px;
     margin: 0 auto;
 }
@@ -153,8 +162,9 @@ a:link, a:visited {
 }
 
 .dashed {
-    stroke: #FF006E;
+    stroke: #FFBE0B;
     stroke-width: 2px;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg=="); background-repeat: repeat;
 }
 
 .solid:hover {
@@ -176,3 +186,37 @@ a:link, a:visited {
     border-radius: 5px;
     padding: 5px;
 }
+
+.day-label {
+    font-weight: 700;
+    font-size: 12pt;
+    fill: white;
+    opacity: 0.5;
+}
+
+.viz-button {
+    visibility: hidden;
+}
+
+#container {
+    width: 100%;
+    max-width: 1024px;
+    margin: auto;
+ }
+ 
+ #top-section {
+   border-bottom: 1px solid red;
+ }
+ 
+ #expand-container {
+   overflow: hidden;
+ }
+ 
+ #expand-contract {
+   margin-top: -100%;
+   transition: all 0.5s;
+ }
+ 
+ #expand-contract.expanded {
+    margin-top: 0;
+ }
